@@ -11,12 +11,16 @@ export default async function handler(req, res) {
   if (method === "GET") {
     // dashboard
     if (req.query.dashboard) {
-      const year = new Date().getFullYear();
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const day = date.getDate();
+
       return res.status(200).json(
         await Order.find({
           createdAt: {
-            $gte: new Date(year, 0, 1),
-            $lte: new Date(year + 1, 0, 1),
+            $gte: new Date(year - 1, month, 1),
+            $lte: new Date(year, month, day + 1),
           },
         })
           .select({ total: 1, createdAt: 1 })

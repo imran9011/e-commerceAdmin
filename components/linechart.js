@@ -14,7 +14,7 @@ const options = {
     },
     title: {
       display: true,
-      text: "Revenue and Orders " + currentYear,
+      text: "Revenue and Orders " + (currentYear - 1) + "/" + currentYear,
     },
   },
   scales: {
@@ -44,18 +44,21 @@ const options = {
   },
 };
 
-const labels = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const monthList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 export default function LineChart({ orders }) {
-  const month = new Date().getMonth();
-  let revenuePerMonth = new Array(month + 1).fill(0);
-  let ordersPerMonth = new Array(month + 1).fill(0);
+  const currentMonth = new Date().getMonth();
+  const labels = monthList.slice(currentMonth + 1, 12).concat(monthList.slice(0, currentMonth + 1));
+
+  let revenuePerMonth = new Array(12).fill(0);
+  let ordersPerMonth = new Array(12).fill(0);
 
   orders.map((order) => {
-    const month = new Date(order.createdAt).getMonth();
+    let month = new Date(order.createdAt).getMonth() - (currentMonth + 1);
+    if (month < currentMonth) month += 12;
     ordersPerMonth[month] += 1;
     revenuePerMonth[month] += order.total / 100 || 0;
-    return new Date(order.createdAt);
+    // return new Date(order.createdAt);
   });
 
   const data = {
